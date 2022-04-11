@@ -9,72 +9,64 @@ function KGraph({values}) {
   var tmp = JSON.parse(values)
   
   var options = {
-    
     chart: {
-    type: 'area',
-    stacked: false,
     height: 350,
+    type: 'area',
     zoom: {
-      type: 'x',
+      type: "x",
       enabled: true,
-      autoScaleYaxis: true
     },
-    toolbar: {
-      autoSelected: 'zoom'
-    }
+  },
+    
+  title: {
+    text: 'Weather Data'
   },
   dataLabels: {
-    enabled: false
+    enabled: false,
+    enabledOnSeries: [1]
   },
-  markers: {
-    size: 0,
+  labels: tmp.times,
+  xaxis: {
+    type: 'datetime'
   },
-  title: {
-    text: 'Temperature & Humidity',
-    align: 'left'
-  },
-  fill: {
-    type: 'gradient',
-    gradient: {
-      shadeIntensity: 1,
-      inverseColors: false,
-      opacityFrom: 0.7,
-      opacityTo: 0,
-      stops: [0, 90, 100]
+  yaxis: [{
+    title: {
+      text: 'Temperature & Humidity',
     },
-  },
-  yaxis: {
     labels: {
       formatter: function (val) {
-        return (val / 1000000).toFixed(0);
+        return (val).toFixed(0);
       },
-    },
-    title: {
-      text: 'Data'
-    },
-  },
-  xaxis: {
-    type: 'datetime',
-    categories: tmp.times
-  },
-  tooltip: {
-    shared: false,
-    y: {
-      formatter: function (val) {
-        return (val / 1000000).toFixed(0)
-      }
     }
   }
-  };
+  
+  // {
+  //   opposite: true,
+  //   title: {
+  //     text: 'Humidity'
+  //   }
+  // }
+],
+  fill: {
+  type: 'gradient',
+  gradient: {
+    shadeIntensity: 1,
+    inverseColors: false,
+    opacityFrom: 0.7,
+    opacityTo: 0,
+    stops: [0, 90, 100]
+  }
+  }
+  }
   var series = [{
     name: 'Temperature',
+    type: 'area',
     data: tmp.temperature
-  },
-  {
+  }, {
     name: 'Humidity',
+    type: 'area',
     data: tmp.humidity
-  }
-]
+  }]
 
   return <ApexCharts width="350%" options={options} series={series} type="area"/>
 
