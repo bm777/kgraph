@@ -1,209 +1,165 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+import { getActions } from '../lib/api';
+const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-export default function Home() {
+
+function KGraph({values}) {
+  var tmp = JSON.parse(values)
+  
+  var options = {
+    
+    chart: {
+    type: 'area',
+    stacked: false,
+    height: 350,
+    zoom: {
+      type: 'x',
+      enabled: true,
+      autoScaleYaxis: true
+    },
+    toolbar: {
+      autoSelected: 'zoom'
+    }
+  },
+  dataLabels: {
+    enabled: false
+  },
+  markers: {
+    size: 0,
+  },
+  title: {
+    text: 'Temperature & Humidity',
+    align: 'left'
+  },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 1,
+      inverseColors: false,
+      opacityFrom: 0.7,
+      opacityTo: 0,
+      stops: [0, 90, 100]
+    },
+  },
+  yaxis: {
+    labels: {
+      formatter: function (val) {
+        return (val / 1000000).toFixed(0);
+      },
+    },
+    title: {
+      text: 'Data'
+    },
+  },
+  xaxis: {
+    type: 'datetime',
+    categories: tmp.times
+  },
+  tooltip: {
+    shared: false,
+    y: {
+      formatter: function (val) {
+        return (val / 1000000).toFixed(0)
+      }
+    }
+  }
+  };
+  var series = [{
+    name: 'Temperature',
+    data: tmp.temperature
+  },
+  {
+    name: 'Humidity',
+    data: tmp.humidity
+  }
+]
+
+  return <ApexCharts width="350%" options={options} series={series} type="area"/>
+
+}
+
+
+export default function Home({data}) {
+  const router = useRouter()
+  
+
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
+        <title>Sensor Data</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+
       <main>
         <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Kanda Weather Station <a href="http://kandaweather.org/">data</a>
         </h1>
 
         <p className="description">
-          Get started by editing <code>pages/index.js</code>
+          Pulled data from the  <code>Telos Blockchain</code>
         </p>
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        {/* Adding the chart */}
+        <div className='kgraph'>
+          
+          <KGraph values={data}/>
+          {/* <KGraph /> */}
+            
         </div>
+    
+
+        {/* End of the the chart */}        
       </main>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className="logo" />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
     </div>
   )
+}
+
+// getServerSideProps from external sources
+export async function getServerSideProps(context) {
+
+  // get the start time and the name of the device sensor
+  let start = "2022-03-20T09:38:42.500";
+  const _devname = context.query.sensor
+  
+  // get the response data
+  const res = await getActions( start )
+  
+  // parse into json format
+  const json = await res.json()
+  const _actions = json.actions
+
+  const parsed = getData(_actions, _devname)  
+  // console.log(parsed)
+
+  const data = JSON.stringify(parsed)
+  return {
+    props: {
+      data: data || JSON.stringify({})
+    }
+  }
+}
+
+// get all the timeseries & data related to timeseries inside the json response
+function getData(bunk, devname) {
+  let _temperature = []
+  let _humidity = []
+  let _times = []
+  for(let row of bunk){
+    if(row.act.data.devname == devname) {
+      _temperature.push(row.act.data.temperature_c)
+      _humidity.push(row.act.data.humidity_percent)
+      _times.push(row.timestamp)
+    }
+    
+  }
+
+  return {
+    temperature: _temperature,
+    humidity: _humidity,
+    times: _times
+  }
 }
