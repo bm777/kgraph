@@ -111,7 +111,7 @@ function KGraphHum(props) {
   //   }
   // }
 ],
-  color: "#846E7A",
+
   fill: {
   type: 'gradient',
   gradient: {
