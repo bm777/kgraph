@@ -5,6 +5,7 @@ const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export default function KGraph(props) {
     var tmp = JSON.parse(props.values)
+    console.log(tmp)
     
     var options = {
       chart: {
