@@ -6,9 +6,8 @@ const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 
 
-function KGraph(props) {
+function KGraphTemp(props) {
   var tmp = JSON.parse(props.values)
-  console.log(tmp)
   
   var options = {
     chart: {
@@ -21,7 +20,7 @@ function KGraph(props) {
   },
     
   title: {
-    text: 'Weather Data'
+    text: ''
   },
   dataLabels: {
     enabled: false,
@@ -33,7 +32,7 @@ function KGraph(props) {
   },
   yaxis: [{
     title: {
-      text: 'Temperature & Humidity',
+      text: 'Temperature',
     },
     labels: {
       formatter: function (val) {
@@ -64,13 +63,72 @@ function KGraph(props) {
     name: 'Temperature',
     type: 'area',
     data: tmp.temperature
-  }, {
+  }]
+
+  return <ApexCharts width="300%" options={options} series={series} type="area"/>
+
+}
+
+function KGraphHum(props) {
+  var tmp = JSON.parse(props.values)
+  
+  var options = {
+    chart: {
+    height: 350,
+    type: 'area',
+    zoom: {
+      type: "x",
+      enabled: true,
+    },
+  },
+    
+  title: {
+    text: ''
+  },
+  dataLabels: {
+    enabled: false,
+    enabledOnSeries: [1]
+  },
+  labels: tmp.times,
+  xaxis: {
+    type: 'datetime'
+  },
+  yaxis: [{
+    title: {
+      text: 'Humidity',
+    },
+    labels: {
+      formatter: function (val) {
+        return (val).toFixed(0);
+      },
+    }
+  }
+  
+  // {
+  //   opposite: true,
+  //   title: {
+  //     text: 'Humidity'
+  //   }
+  // }
+],
+  color: "#846E7A",
+  fill: {
+  type: 'gradient',
+  gradient: {
+    shadeIntensity: 1,
+    inverseColors: false,
+    opacityFrom: 0.7,
+    opacityTo: 0,
+    stops: [0, 90, 100]
+  }
+  }
+  }
+  var series = [{
     name: 'Humidity',
     type: 'area',
     data: tmp.humidity
   }]
-
-  return <ApexCharts width="350%" options={options} series={series} type="area"/>
+  return <ApexCharts width="300%" options={options} series={series} type="area"/>
 
 }
 
@@ -96,9 +154,16 @@ export default function Home(props) {
         <div className='kgraph'>
           
           {
-            props.existing_data ? 
-
-            <KGraph values={props.data}/> : "No data was collected on that period or the given sensor doesn't exist"
+            props.existing_data ?
+            (
+              <>
+                <KGraphTemp values={props.data}/> 
+                <KGraphHum values={props.data}/>
+              </> 
+            ) :
+            (
+              "No data was collected on that period or the given sensor doesn't exist"
+            )
 
           }
           
@@ -138,7 +203,6 @@ export async function getServerSideProps(context) {
    
 
   const parsed = getData(_actions, _devname)
-  // console.log(parsed)
 
   const _data = JSON.stringify(parsed)
   
@@ -150,10 +214,12 @@ export async function getServerSideProps(context) {
     existing_data = true
   }
 
+
   return {
     props: {
       data: _data || JSON.stringify({}),
-      existing_data
+      existing_data,
+
     }
   }
 }
