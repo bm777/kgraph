@@ -1,7 +1,5 @@
 import Head from 'next/head'
-// import KGraph from './KGraph';
 import { getActions, getData } from '../lib/api';
-// import { MDBBtn } from 'mdbreact';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });

@@ -115,8 +115,9 @@ code {
 .btn {
   position:"relative"; 
   margin-left: 30px;
-  /* background-color: #0070f3; */
-  /* color: white; */
+  background-color: #0070f3; 
+  color: white;
   border-radius: 5px;
+  
 }
 
