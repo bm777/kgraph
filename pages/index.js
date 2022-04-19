@@ -1,13 +1,18 @@
 import Head from 'next/head'
 // import KGraph from './KGraph';
 import { getActions, getData } from '../lib/api';
+// import { MDBBtn } from 'mdbreact';
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 
 
 function KGraphTemp(props) {
   var tmp = JSON.parse(props.values)
+  const [celcius, setCelcius] = useState(true);
+  const [clicked, setClicked] = useState(false);
+  const [stop, setStop] = useState(false);
   
   var options = {
     chart: {
@@ -36,7 +41,14 @@ function KGraphTemp(props) {
     },
     labels: {
       formatter: function (val) {
-        return (val).toFixed(0);
+        if(!stop && celcius){
+          return (val).toFixed(2);
+        } 
+        if(!celcius){
+          return (1.8 *(val) + 32).toFixed(2);
+          
+        }
+        
       },
     }
   }
@@ -65,7 +77,21 @@ function KGraphTemp(props) {
     data: tmp.temperature
   }]
 
-  return <ApexCharts width="300%" options={options} series={series} type="area"/>
+  return (
+    <>
+      <div className='addButton'>
+        {/* <MDBBtn>to Fahrenheit</MDBBtn> */}
+        <button className='btn' onClick={() => {setStop(true); setClicked(!clicked); setCelcius(!celcius)}}>
+          {
+            celcius ? "to Fahrenheit"+clicked : "to Celcius"+clicked
+          }
+        </button>
+        <ApexCharts width="300%" options={options} series={series} type="area"/>
+      </div>
+      
+      
+    </>
+  )
 
 }
 
@@ -111,7 +137,9 @@ function KGraphHum(props) {
   //   }
   // }
 ],
-
+  legend: {
+    show: false
+  },
   fill: {
   type: 'gradient',
   gradient: {
@@ -128,7 +156,12 @@ function KGraphHum(props) {
     type: 'area',
     data: tmp.humidity
   }]
-  return <ApexCharts width="300%" options={options} series={series} type="area"/>
+  return (
+    <div className='addButton'>
+      <br />
+      <ApexCharts width="300%" options={options} series={series} type="area"/>
+    </div>
+  )
 
 }
 

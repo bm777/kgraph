@@ -108,4 +108,15 @@ code {
   display: flex;
   justify-content: space-between;
 }
+.addButton {
+  position: relative;
+}
+
+.btn {
+  position:"relative"; 
+  margin-left: 30px;
+  /* background-color: #0070f3; */
+  /* color: white; */
+  border-radius: 5px;
+}
 
