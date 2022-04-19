@@ -40,7 +40,7 @@ function KGraphTemp(props) {
   },
   yaxis: [{
     title: {
-      text: 'Temperature',
+      text: celcius? "Temperature  (°C)" : " Temperature (°F)",
     },
     labels: {
       formatter: function (val) {
@@ -67,7 +67,7 @@ function KGraphTemp(props) {
   }
   }
   }
-
+  // Converted value to Fahrenheit unit
   var series_fah = conversion(tmp.temperature)
 
   var series = [{
@@ -122,7 +122,7 @@ function KGraphHum(props) {
   },
   yaxis: [{
     title: {
-      text: 'Humidity',
+      text: 'Humidity (%)',
     },
     labels: {
       formatter: function (val) {
