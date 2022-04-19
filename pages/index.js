@@ -6,13 +6,18 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-
+function conversion(list) {
+  var converted = []
+  for (let i of list) {
+    converted.push((i * 1.8 + 32).toFixed(2))
+  }
+  return converted
+}
 
 function KGraphTemp(props) {
   var tmp = JSON.parse(props.values)
   const [celcius, setCelcius] = useState(true);
-  const [clicked, setClicked] = useState(false);
-  const [stop, setStop] = useState(false);
+
   
   var options = {
     chart: {
@@ -41,15 +46,8 @@ function KGraphTemp(props) {
     },
     labels: {
       formatter: function (val) {
-        if(!stop && celcius){
-          return (val).toFixed(2);
-        } 
-        if(!celcius){
-          return (1.8 *(val) + 32).toFixed(2);
-          
-        }
-        
-      },
+          return (val).toFixed(2)
+      }
     }
   }
   
@@ -71,19 +69,23 @@ function KGraphTemp(props) {
   }
   }
   }
+
+  var series_fah = conversion(tmp.temperature)
+
   var series = [{
     name: 'Temperature',
     type: 'area',
-    data: tmp.temperature
+    data: celcius ? tmp.temperature : series_fah
   }]
+  
 
   return (
     <>
       <div className='addButton'>
         {/* <MDBBtn>to Fahrenheit</MDBBtn> */}
-        <button className='btn' onClick={() => {setStop(true); setClicked(!clicked); setCelcius(!celcius)}}>
+        <button className='btn' onClick={() => { setCelcius(!celcius)}}>
           {
-            celcius ? "to Fahrenheit"+clicked : "to Celcius"+clicked
+            celcius ? "to Fahrenheit" : "to Celcius"
           }
         </button>
         <ApexCharts width="300%" options={options} series={series} type="area"/>
@@ -94,6 +96,7 @@ function KGraphTemp(props) {
   )
 
 }
+
 
 function KGraphHum(props) {
   var tmp = JSON.parse(props.values)
