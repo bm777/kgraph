@@ -30,7 +30,7 @@ export default function Home(props) {
             !props.is_data_collected ?
             (
               <>
-                Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}
+                Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.start },{props._from}
               </>
             ):
             (
@@ -112,21 +112,22 @@ export async function getServerSideProps(context) {
   let is_data_collected = false
 
   if(size == 0){
-    is_data_collected = true
+    is_data_collected = false
   }else{
     const from = new Date(parsed.times[size-1]).toISOString()
     const day_threshold = start
     is_data_collected = compare(from, day_threshold)
   }
   
-  
+  var _from = new Date(parsed.times[size-1]).toISOString()
   return {
     props: {
       data: _data || JSON.stringify({}),
       existing_sensor,
       is_data_collected,
       start,
-      size
+      size,
+      _from
     }
   }
 }
