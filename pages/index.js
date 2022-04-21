@@ -35,7 +35,7 @@ export default function Home(props) {
             ):
             (
               <>
-                <code>Data wasn't collected on that period</code>
+                <code>Data wasn't collected on that period, after {props.start}</code> {}
               </>
             )
           } 
@@ -124,7 +124,8 @@ export async function getServerSideProps(context) {
     props: {
       data: _data || JSON.stringify({}),
       existing_sensor,
-      is_data_collected
+      is_data_collected,
+      start
     }
   }
 }
