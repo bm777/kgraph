@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { getActions, getData, conversion } from '../lib/api';
+import { getActions, getData, conversion, compare } from '../lib/api';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -176,44 +176,44 @@ export default function Home(props) {
 
         <p className="description">
           {
-            props.existing_data ? 
+            props.existing_sensor && props.is_data_collected? 
             (
               <>
-              Pulled data from the <code>Telos Blockchain</code>
-              </>
-              
+                Pulled data from the <code>Telos Blockchain</code>
+              </> 
             )
             :
+            props.is_data_collected ?
             (
               <>
                 <code>Sensor doesn't exist</code>
               </>
+            ):
+            (
+              <>
+                <code>Data wasn't collected on that period</code>
+              </>
             )
-          }
-          
+          } 
         </p>
 
         {/* Adding the chart */}
         <div className='kgraph'>
-          
           {
-            props.existing_data ?
-            (
-              <>
-                <KGraphTemp values={props.data}/> 
-                <KGraphHum values={props.data}/>
-              </> 
-            ) :
-            ( <>
+            (props.existing_sensor && props.is_data_collected)?
+              (
+                <>
+                  <KGraphTemp values={props.data}/> 
+                  <KGraphHum values={props.data}/>
+                </> 
+              ) 
+            :
+              ( <>
                 <KGraphTemp values={JSON.stringify({temperature:[],humidity:[],times:[]})}/> 
                 <KGraphHum values={JSON.stringify({temperature:[],humidity:[],times:[]})}/> 
               </>
-            )
-
-          }
-          
-          {/* <KGraph /> */}
-            
+              )
+          }       
         </div>
     
 
@@ -253,22 +253,45 @@ export async function getServerSideProps(context) {
    
 
   const parsed = getData(_actions, _devname)
+  // if (!parsed.temperature){
+  //   const size = parsed.times.length
+  // } else {
+  //   const size = parsed.times.length
+  // }
+    
+  
+ 
 
   const _data = JSON.stringify(parsed)
   
   // check result of _data
-  let existing_data = false
+  let existing_sensor = false
   if(_data == JSON.stringify({temperature:[],humidity:[],times:[]})){
-    existing_data = false
+    existing_sensor = false
   }else{
-    existing_data = true
+    existing_sensor = true
   }
+  // is data collected statement
+  const size = parsed.times.length
+  let is_data_collected = true
+
+  if(size == 0){
+    is_data_collected = true
+  }else{
+    const from = new Date(parsed.times[size-1]).toISOString()
+    const day_threshold = start
+    is_data_collected = compare(from, day_threshold)
+  }
+  
+
+  
 
 
   return {
     props: {
       data: _data || JSON.stringify({}),
-      existing_data,
+      existing_sensor,
+      is_data_collected
     }
   }
 }
