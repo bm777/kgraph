@@ -30,12 +30,12 @@ export default function Home(props) {
             !props.is_data_collected ?
             (
               <>
-                <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}
+                Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}
               </>
             ):
             (
               <>
-                <code>Sensor doesn't exist</code>
+                Debug : <code>Sensor doesn't exist</code>
               </>
             )
           } 
