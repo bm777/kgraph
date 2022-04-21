@@ -35,7 +35,7 @@ export default function Home(props) {
             ):
             (
               <>
-                <code>Data wasn't collected on that period, after {props.start}</code> {}
+                <code>Data wasn't collected on that period, after {props.len}</code> {}
               </>
             )
           } 
@@ -99,6 +99,8 @@ export async function getServerSideProps(context) {
   const parsed = getData(_actions, _devname)
 
   const _data = JSON.stringify(parsed)
+  const len = parsed.temperature.length
+  console.log(len)
   
   // check result of _data
   let existing_sensor = false
@@ -125,7 +127,8 @@ export async function getServerSideProps(context) {
       data: _data || JSON.stringify({}),
       existing_sensor,
       is_data_collected,
-      start
+      start,
+
     }
   }
 }
