@@ -35,7 +35,7 @@ export default function Home(props) {
             ):
             (
               <>
-                <code>Data wasn't collected on that period, after {props.len}</code> {}
+                <code>Data wasn't collected on that period, after {props.data}</code> {}
               </>
             )
           } 
