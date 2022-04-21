@@ -27,15 +27,15 @@ export default function Home(props) {
               </> 
             )
             :
-            props.is_data_collected ?
+            !props.is_data_collected ?
             (
               <>
-                <code>Sensor doesn't exist</code>
+                <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}
               </>
             ):
             (
               <>
-                <code>Data wasn't collected on that period, after {props.data}</code> {}
+                <code>Sensor doesn't exist</code>
               </>
             )
           } 
@@ -99,8 +99,6 @@ export async function getServerSideProps(context) {
   const parsed = getData(_actions, _devname)
 
   const _data = JSON.stringify(parsed)
-  const len = parsed.temperature.length
-  console.log(len)
   
   // check result of _data
   let existing_sensor = false
@@ -111,7 +109,7 @@ export async function getServerSideProps(context) {
   }
   // is data collected statement ?
   const size = parsed.times.length
-  let is_data_collected = true
+  let is_data_collected = false
 
   if(size == 0){
     is_data_collected = true
@@ -128,7 +126,7 @@ export async function getServerSideProps(context) {
       existing_sensor,
       is_data_collected,
       start,
-
+      size
     }
   }
 }
