@@ -1,16 +1,10 @@
 import Head from 'next/head'
-import { getActions, getData } from '../lib/api';
+import { getActions, getData, conversion } from '../lib/api';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-function conversion(list) {
-  var converted = []
-  for (let i of list) {
-    converted.push((i * 1.8 + 32).toFixed(2))
-  }
-  return converted
-}
+
 
 function KGraphTemp(props) {
   var tmp = JSON.parse(props.values)
@@ -181,7 +175,22 @@ export default function Home(props) {
         </h1>
 
         <p className="description">
-          Pulled data from the  <code>Telos Blockchain</code>
+          {
+            props.existing_data ? 
+            (
+              <>
+              Pulled data from the <code>Telos Blockchain</code>
+              </>
+              
+            )
+            :
+            (
+              <>
+                <code>Sensor doesn't exist</code>
+              </>
+            )
+          }
+          
         </p>
 
         {/* Adding the chart */}
@@ -195,8 +204,10 @@ export default function Home(props) {
                 <KGraphHum values={props.data}/>
               </> 
             ) :
-            (
-              "No data was collected on that period or the given sensor doesn't exist"
+            ( <>
+                <KGraphTemp values={JSON.stringify({temperature:[],humidity:[],times:[]})}/> 
+                <KGraphHum values={JSON.stringify({temperature:[],humidity:[],times:[]})}/> 
+              </>
             )
 
           }
@@ -222,7 +233,12 @@ export async function getServerSideProps(context) {
   // let start = "2022-03-10T09:38:42.500Z";
   
   const _devname = context.query.sensor
-  const _before = context.query.before
+  var _before = context.query.before
+
+  /////////////////////////////
+  if(!_before) _before = 5
+  /////////////////////////////
+
   d.setDate(d.getDate() - _before);
   
   // set the day to today - 'before' days
@@ -253,7 +269,6 @@ export async function getServerSideProps(context) {
     props: {
       data: _data || JSON.stringify({}),
       existing_data,
-
     }
   }
 }
