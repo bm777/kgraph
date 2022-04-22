@@ -27,13 +27,13 @@ export default function Home(props) {
               </> 
             )
             :
-            !props.is_data_collected ?
-            (
-              <>
-                <code>Data wasn't collected on that period </code>
+            // !props.is_data_collected ?
+            // (
+            //   <>
+            //     <code>Data wasn't collected on that period </code>
 
-              </>
-            ):
+            //   </>
+            // ):
             (
               <>
                 <code>Sensor doesn't exist</code>
@@ -45,7 +45,7 @@ export default function Home(props) {
         {/* Adding the chart */}
         <div className='kgraph'>
           {
-            (props.existing_sensor && props.is_data_collected)?
+            (props.existing_sensor )?
               (
                 <>
                   <KGraphTemp values={props.data}/> 
@@ -95,9 +95,7 @@ export async function getServerSideProps(context) {
   // parse into json format
   const json = await res.json()
   const _actions = json.actions
-
   const parsed = getData(_actions, _devname)
-  console.log(parsed)
 
   const _data = JSON.stringify(parsed)
   
