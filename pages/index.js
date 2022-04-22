@@ -61,7 +61,6 @@ export default function Home(props) {
           }       
         </div>
     
-
         {/* End of the the chart */}        
       </main>
 
