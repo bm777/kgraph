@@ -20,7 +20,7 @@ export default function Home(props) {
 
         <p className="description">
           {
-            props.existing_sensor && props.is_data_collected? 
+            props.existing_sensor ? 
             (
               <>
                 Pulled data from the <code>Telos Blockchain</code>
@@ -30,13 +30,13 @@ export default function Home(props) {
             !props.is_data_collected ?
             (
               <>
-                Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end}
-                {JSON.parse(props.data).times}
+                <code>Data wasn't collected on that period </code>
+
               </>
             ):
             (
               <>
-                Debug : <code>Sensor doesn't exist</code>
+                <code>Sensor doesn't exist</code>
               </>
             )
           } 
@@ -97,6 +97,7 @@ export async function getServerSideProps(context) {
   const _actions = json.actions
 
   const parsed = getData(_actions, _devname)
+  console.log(parsed)
 
   const _data = JSON.stringify(parsed)
   
@@ -115,22 +116,17 @@ export async function getServerSideProps(context) {
   if(size == 0){
     is_data_collected = false
   }else{
-    const from = parsed.times[size-1]
-    const day_threshold = start
-    is_data_collected = compare(from, day_threshold)
-    // console.log(from, day_threshold)
+    
+    is_data_collected = true
   }
   
-  var begin = new Date(parsed.times[size-1]).toISOString()
-  var end = start
+ 
   return {
     props: {
       data: _data || JSON.stringify({}),
       existing_sensor,
       is_data_collected,
-      end,
-      size,
-      begin
+
     }
   }
 }
