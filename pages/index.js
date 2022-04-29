@@ -20,28 +20,29 @@ export default function Home(props) {
 
         <p className="description">
           {
-            props.existing_sensor && props.is_data_collected ? 
+            props.existing_sensor ? 
             (
-              <>
-                -Pulled data from the <code>Telos Blockchain</code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end},
-                {props.val}
-              </> 
+              props.is_data_collected ?
+              (
+                <>
+                  Pulled data from the <code>Telos Blockchain</code> 
+                </>
+              )
+              :
+              (
+                <>
+                  <code>Data wasn't collected on that period </code> 
+                </>
+              )
+              
             )
             :
-            !props.is_data_collected ?
             (
               <>
-                -Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end},
-                {props.val}
-              {/* {JSON.parse(props.data).times} */}
-              </>
-            ):
-            (
-              <>
-                -Debug : <code>Sensor doesn't exist</code>
-              </>
+                <code>Sensor doesn't exist</code> 
+              </> 
             )
-          } 
+          }
         </p>
 
         {/* Adding the chart */}
@@ -112,39 +113,36 @@ export async function getServerSideProps(context) {
   const parsed = getData(_actions, _devname)
 
   const _data = JSON.stringify(parsed)
-  
+
+  let is_data_collected = false
+
   // check result of _data
   let existing_sensor = false
   if(_data == JSON.stringify({temperature:[],humidity:[],times:[]})){
     existing_sensor = false
   }else{
     existing_sensor = true
+
+    // is data collected statement ?
+    const size = parsed.times.length
+
+    if(size == 0){
+      is_data_collected = false
+    }else{
+      const from = parsed.times[size-1]
+      const day_threshold = start
+      is_data_collected = compare(from, day_threshold)
+      // console.log(from, day_threshold)
+    }
   }
 
-  // is data collected statement ?
-  const size = parsed.times.length
-  let is_data_collected = true
-
-  if(size == 0){
-    is_data_collected = false
-  }else{
-    const from = parsed.times[size-1]
-    const day_threshold = start
-    is_data_collected = compare(from, day_threshold)
-    // console.log(from, day_threshold)
-  }
-  
-  var begin = new Date(parsed.times[size-1]).toISOString()
-  var end = start
+  // console.log(is_data_collected, existing_sensor)
   return {
     props: {
       data: _data || JSON.stringify({}),
       existing_sensor,
       is_data_collected,
-      end,
-      size,
-      begin,
-      val
+
     }
   }
 }
