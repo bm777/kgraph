@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { getActions, getData, compare } from '../lib/api';
+import { getActions, getData, compare, checkCurrentGMT } from '../lib/api';
 import KGraphTemp from '../components/KGraphTemp';
 import KGraphHum from '../components/KGraphHum';
 
@@ -24,6 +24,7 @@ export default function Home(props) {
             (
               <>
                 -Pulled data from the <code>Telos Blockchain</code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end},
+                {props.val}
               </> 
             )
             :
@@ -31,7 +32,7 @@ export default function Home(props) {
             (
               <>
                 -Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end},
-                {/* {props.val} */}
+                {props.val}
               {/* {JSON.parse(props.data).times} */}
               </>
             ):
@@ -85,6 +86,17 @@ export async function getServerSideProps(context) {
   /////////////////////////////
 
   d.setDate(d.getDate() - _before);
+
+  // check GMT index time to different zone
+  var val = new Date().toString().match(/([-\+][0-9]+)\s/)[1] 
+  var id = checkCurrentGMT(val)
+  if (id == 0 ){
+    // add 1hour to the server time
+    d.setHours( d.getHours() + 1 )
+  }
+  if (id == 1){
+    // keep time
+  }
   
   // set the day to today - 'before' days
   let start = d.toISOString()
@@ -120,9 +132,6 @@ export async function getServerSideProps(context) {
     is_data_collected = compare(from, day_threshold)
     // console.log(from, day_threshold)
   }
-  var val = new Date().toString().match(/([-\+][0-9]+)\s/)[1] 
-  val = val.slice(0,3)
-  console.log(val);
   
   var begin = new Date(parsed.times[size-1]).toISOString()
   var end = start
