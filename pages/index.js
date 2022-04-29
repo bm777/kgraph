@@ -23,7 +23,7 @@ export default function Home(props) {
             props.existing_sensor && props.is_data_collected ? 
             (
               <>
-                -Pulled data from the <code>Telos Blockchain</code>
+                -Pulled data from the <code>Telos Blockchain</code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end},
               </> 
             )
             :
@@ -31,7 +31,7 @@ export default function Home(props) {
             (
               <>
                 -Debug : <code>Data wasn't collected on that period </code> collected: {props.is_data_collected ? "true":"false"}, size: {props.size}, {props.begin },{props.end},
-                {props.val}
+                {/* {props.val} */}
               {/* {JSON.parse(props.data).times} */}
               </>
             ):
@@ -138,4 +138,3 @@ export async function getServerSideProps(context) {
     }
   }
 }
-
