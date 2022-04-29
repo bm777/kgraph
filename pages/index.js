@@ -85,24 +85,24 @@ export async function getServerSideProps(context) {
   if(!_before) _before = 5
   /////////////////////////////
 
-  d.setDate(d.getDate() - _before);
-
-  // check GMT index time to different zone
-  var val = new Date().toString().match(/([-\+][0-9]+)\s/)[1] 
-  var id = checkCurrentGMT(val)
-  if (id == 0 ){
-    // add 1hour to the server time
-    // d.setHours( d.getHours() + 1 )
-  }
-  if (id == 1){
-    // keep time
-  }
+  d.setDate(d.getDate() - _before)
   
   // set the day to today - 'before' days
   let start = d.toISOString()
  
   // get the response data
   const res = await getActions( start )
+
+  // check GMT index time to different zone
+  var val = new Date().toString().match(/([-\+][0-9]+)\s/)[1] 
+  var id = checkCurrentGMT(val)
+  if (id == 0 ){
+    // add 1hour to the server time
+    d.setHours( d.getHours() + 1 )
+  }
+  if (id == 1){
+    // keep time
+  }
 
   // parse into json format
   const json = await res.json()
