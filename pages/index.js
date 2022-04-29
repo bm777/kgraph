@@ -99,6 +99,7 @@ export async function getServerSideProps(context) {
   if (id == 0 ){
     // add 1hour to the server time
     d.setHours( d.getHours() + 1 )
+    start = d.toISOString()
   }
   if (id == 1){
     // keep time
