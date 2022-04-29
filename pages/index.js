@@ -92,7 +92,7 @@ export async function getServerSideProps(context) {
   var id = checkCurrentGMT(val)
   if (id == 0 ){
     // add 1hour to the server time
-    d.setHours( d.getHours() + 1 )
+    // d.setHours( d.getHours() + 1 )
   }
   if (id == 1){
     // keep time
